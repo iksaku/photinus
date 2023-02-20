@@ -12,7 +12,6 @@ import {
   Scripts,
   Title,
 } from "solid-start";
-import "./root.css";
 
 export default function Root() {
   return (
@@ -25,8 +24,6 @@ export default function Root() {
       <Body>
         <Suspense>
           <ErrorBoundary>
-            <A href="/">Home</A>
-            <A href="/protected">Protected</A>
             <Routes>
               <FileRoutes />
             </Routes>
