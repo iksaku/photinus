@@ -1,7 +1,6 @@
 // @refresh reload
 import { Suspense } from "solid-js";
 import {
-  A,
   Body,
   ErrorBoundary,
   FileRoutes,
@@ -12,6 +11,8 @@ import {
   Scripts,
   Title,
 } from "solid-start";
+import { initializeToken } from "./lib/util/authUtils";
+import { middlewareElement } from "./lib/util/Middleware";
 
 export default function Root() {
   return (
@@ -24,9 +25,11 @@ export default function Root() {
       <Body>
         <Suspense>
           <ErrorBoundary>
-            <Routes>
-              <FileRoutes />
-            </Routes>
+            <InitializeAuth>
+              <Routes>
+                <FileRoutes />
+              </Routes>
+            </InitializeAuth>
           </ErrorBoundary>
         </Suspense>
         <Scripts />
@@ -34,3 +37,7 @@ export default function Root() {
     </Html>
   );
 }
+
+const InitializeAuth = middlewareElement(async () => {
+  await initializeToken()
+})
