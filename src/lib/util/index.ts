@@ -16,7 +16,16 @@ export function tap<T = any>(value: T, callback: (value: T) => void): T {
     return value
 }
 
-export function joinPath(...parts: string[]) {
+export function value<T = any>(val: T, ...args: any): T extends ((...args: any) => infer R) ? R : T
+{
+    if (typeof val == 'function') {
+        return val(...args)
+    }
+
+    return val as any
+}
+
+export function joinPath(...parts: string[]): string {
     return parts.reduce(
         (carry: string, path: string) => carry + '/' + path
             // Remove leading slash

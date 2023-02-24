@@ -6,11 +6,10 @@
 import { createEffect } from "solid-js";
 import { useNavigate } from "solid-start";
 import { z } from "zod";
-import { GetUserInformation } from "../api/about";
-import { GetOauthToken } from "../api/oauth";
-import { isAuthenticated, logout, setToken, setUser, token, Token, user } from "./auth";
-import { cache } from "./cache";
-import { middlewareElement } from "./Middleware";
+import { GetUserInformation } from "../../api/about";
+import { GetOauthToken } from "../../api/oauth";
+import { isAuthenticated, logout, setToken, setUser, token, Token, user } from ".";
+import { cache } from "../cache";
 
 async function fetchUserData(token?: Token) {
     const response = await new GetUserInformation()
@@ -75,22 +74,3 @@ export async function initializeToken() {
         await updateToken(cache.get('firefly:token'))
     }
 }
-
-export const AuthenticatedMiddleware = middlewareElement(() => {
-    const navigate = useNavigate()
-
-    // Effects are always ran when defined, so it helps quite well.
-    createEffect(() => {
-        if (! isAuthenticated()) {
-            navigate('/login')
-        }
-    })
-})
-
-export const GuestMiddleware = middlewareElement(() => {
-    const navigate = useNavigate()
-
-    if (isAuthenticated()) {
-        navigate('/')
-    }
-})

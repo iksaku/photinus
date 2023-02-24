@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { cache } from "./cache";
+import { cache } from "../cache";
 
 type User = {
     id: number

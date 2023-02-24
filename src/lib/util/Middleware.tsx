@@ -1,9 +1,8 @@
-import { lazy } from "solid-js"
+import { Navigate, NavigateProps } from "@solidjs/router";
+import { Accessor, ParentProps, Show } from "solid-js";
 
-export const middlewareElement = (callback: () => void | PromiseLike<void>) => lazy(async () => {
-    await callback()
-
-    return {
-        default: (props) => (<>{props.children}</>)
-    }
-})
+export const RedirectMiddleware = (props: ParentProps<{ condition: Accessor<boolean>, fallback: NavigateProps['href'] }>) => (
+    <Show when={props.condition()} fallback={<Navigate href={props.fallback} />}>
+        {props.children}
+    </Show>
+)

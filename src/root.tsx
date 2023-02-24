@@ -11,8 +11,7 @@ import {
   Scripts,
   Title,
 } from "solid-start";
-import { initializeToken } from "./lib/util/authUtils";
-import { middlewareElement } from "./lib/util/Middleware";
+import { InitializeAuthentication } from "./lib/util/auth/middleware";
 
 export default function Root() {
   return (
@@ -25,11 +24,11 @@ export default function Root() {
       <Body>
         <Suspense>
           <ErrorBoundary>
-            <InitializeAuth>
+            <InitializeAuthentication>
               <Routes>
                 <FileRoutes />
               </Routes>
-            </InitializeAuth>
+            </InitializeAuthentication>
           </ErrorBoundary>
         </Suspense>
         <Scripts />
@@ -37,7 +36,3 @@ export default function Root() {
     </Html>
   );
 }
-
-const InitializeAuth = middlewareElement(async () => {
-  await initializeToken()
-})

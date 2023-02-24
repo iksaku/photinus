@@ -1,7 +1,8 @@
 import { createRouteAction, redirect, useSearchParams } from "solid-start";
 import { GetOauthToken } from "~/lib/api/oauth";
 import { cache, sessionCache } from "~/lib/util";
-import { GuestMiddleware, updateToken } from "~/lib/util/authUtils";
+import { updateToken } from "~/lib/util/auth/util";
+import { GuestMiddleware } from "~/lib/util/auth/middleware";
 
 export default function Callback() {
     const [status, requestToken] = createRouteAction(async () => {

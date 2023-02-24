@@ -1,5 +1,5 @@
 import { logout, user } from "~/lib/util";
-import { AuthenticatedMiddleware, updateToken } from "~/lib/util/authUtils";
+import { AuthenticatedMiddleware } from "~/lib/util/auth/middleware";
 
 export default function Home() {
   return (

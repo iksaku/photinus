@@ -1,35 +1,13 @@
 import { Show } from "solid-js";
-import { createRouteAction, redirect, useNavigate, useRouteData } from "solid-start";
-import { cache, isAuthenticated, sessionCache, str_random, zodErrorToLaravelFormat } from "~/lib/util";
+import { createRouteAction, redirect } from "solid-start";
+import { cache, sessionCache, str_random, value, zodErrorToLaravelFormat } from "~/lib/util";
 import { z, ZodError } from "zod";
-import { GuestMiddleware } from "~/lib/util/authUtils";
+import { GuestMiddleware } from "~/lib/util/auth/middleware";
 
 const validator = z.object({
     domain: z.string().url(),
     clientId: z.string().min(1),
 })
-
-async function generateCodeChallenge(): Promise<{ codeChallenge: string, codeVerifier: string }> {
-    let codeVerifier = str_random(128)
-
-    const codeChallenge = btoa(
-        String.fromCharCode.apply(
-            null,
-            // @ts-ignore
-            new Uint8Array(
-                await crypto.subtle.digest(
-                    'SHA-256',
-                    new TextEncoder().encode(codeVerifier)
-                )
-            )
-        )
-    )
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "")
-
-    return { codeChallenge, codeVerifier }
-}
 
 export default function Login() {
     const domain = cache.get('firefly:domain')
@@ -44,7 +22,28 @@ export default function Login() {
             throw zodErrorToLaravelFormat(e as ZodError)
         }
 
-        const { codeChallenge, codeVerifier } = await generateCodeChallenge()
+        const { codeChallenge, codeVerifier } = await value(async () => {
+            let codeVerifier = str_random(128)
+
+            const codeChallenge = btoa(
+                String.fromCharCode.apply(
+                    null,
+                    // @ts-ignore
+                    new Uint8Array(
+                        await crypto.subtle.digest(
+                            'SHA-256',
+                            new TextEncoder().encode(codeVerifier)
+                        )
+                    )
+                )
+            )
+                .replace(/\+/g, "-")
+                .replace(/\//g, "_")
+                .replace(/=+$/, "")
+
+            return { codeChallenge, codeVerifier }
+        })
+
         const state = str_random(10)
 
         cache.putMany({
