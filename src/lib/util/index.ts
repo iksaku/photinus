@@ -1,3 +1,5 @@
+import { Accessor, createSignal } from 'solid-js'
+
 export * from './auth'
 export * from './cache'
 export * from './zod'
@@ -37,4 +39,18 @@ export function joinPath(...parts: string[]): string {
 
 export function mergeEntries<T extends object>(entry: T, ...entries: T[]): T {
     return Object.assign(entry, ...entries)
+}
+
+export async function wait(ms?: number): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export function createCallbackTrackingSignal<T = any>(callback: any): Accessor<boolean> {
+    const [finished, setFinished] = createSignal(false)
+    value(async () => {
+        await value(callback)
+        setFinished(true)
+    })
+
+    return finished
 }

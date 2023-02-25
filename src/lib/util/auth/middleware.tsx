@@ -1,21 +1,18 @@
-import { createSignal, ParentProps, Show } from "solid-js";
+import { ParentProps, Show } from "solid-js";
 import { isAuthenticated, token } from ".";
-import { cache, value } from "..";
-import { RedirectMiddleware } from "../Middleware"
+import { cache, createCallbackTrackingSignal } from "..";
+import { RedirectMiddleware } from "../middleware"
 import { updateToken } from "./util";
 
 export const InitializeAuthentication = (props: ParentProps) => {
-    const [initialized, setInitialized] = createSignal(false)
-    value(async () => {
+    const initialized = createCallbackTrackingSignal(async () => {
         if (!token() && cache.has('firefly:token')) {
             await updateToken(cache.get('firefly:token'))
         }
-
-        setInitialized(true)
     })
 
     return (
-        <Show when={initialized()} fallback={<p>Loading...</p>}>
+        <Show when={initialized()} fallback={<p>🔒 Authenticating...</p>}>
             {props.children}
         </Show>
     )
