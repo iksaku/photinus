@@ -3,12 +3,10 @@
 // and these utils invoke a subclass of Request, creating a
 // circular dependency 😵‍💫.
 
-import { createEffect } from "solid-js";
-import { useNavigate } from "solid-start";
 import { z } from "zod";
 import { GetUserInformation } from "../../api/about";
 import { GetOauthToken } from "../../api/oauth";
-import { isAuthenticated, logout, setToken, setUser, token, Token, user } from ".";
+import { logout, setToken, setUser, token, Token } from ".";
 import { cache } from "../cache";
 
 async function fetchUserData(token?: Token) {
@@ -16,10 +14,7 @@ async function fetchUserData(token?: Token) {
         .withBearerToken(token?.access_token)
         .send()
 
-    setUser({
-        id: parseInt(response.data.id),
-        email: response.data.attributes.email
-    })
+    
 }
 
 export async function updateToken(newToken: Token) {
@@ -36,9 +31,20 @@ export async function updateToken(newToken: Token) {
     }
 
     try {
-        await fetchUserData(newToken)
+        const response = await new GetUserInformation()
+            .withBearerToken(newToken.access_token)
+            .send()
+
         cache.put('firefly:token', newToken)
+        
+        // Update the token in memory first to make sure future
+        // requests from authentication redirection use the
+        // new tokens.
         setToken(newToken)
+        setUser({
+            id: parseInt(response.data.id),
+            email: response.data.attributes.email
+        })
     } catch {
         // TODO: Way to differentiate token expiration from other types of issues
         await refreshToken()
@@ -46,7 +52,7 @@ export async function updateToken(newToken: Token) {
 }
 
 export async function refreshToken(): Promise<void> {
-    if (!token()?.refresh_token) {
+    if (!refreshToken()) {
         logout()
     }
 
@@ -55,7 +61,7 @@ export async function refreshToken(): Promise<void> {
             .withFormData({
                 'grant_type': 'refresh_token',
                 'client_id': cache.get('firefly:oauth:clientId'),
-                'refresh_token': token()!.refresh_token,
+                'refresh_token': refreshToken(),
             })
             .send()
 

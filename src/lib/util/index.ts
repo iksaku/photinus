@@ -54,3 +54,11 @@ export function createCallbackTrackingSignal<T = any>(callback: any): Accessor<b
 
     return finished
 }
+
+export function formatNumber(number: number|string): string {
+    // Add thousand separator to number
+    // Taken from: https://stackoverflow.com/a/2901298
+    return number
+        .toString()
+        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+}

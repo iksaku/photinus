@@ -23,3 +23,5 @@ export type Token = {
 }
 
 export const [token, setToken] = createSignal<Token>()
+export const accessToken = () => token()?.access_token
+export const refreshToken = () => token()?.refresh_token

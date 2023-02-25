@@ -1,15 +1,17 @@
 import { Request } from "../Request";
+import { FireFlyApiV1Response } from "."
 
-type UserInformationResponse = {
-    data: {
-        id: string
-        attributes: {
-            email: string
-        }
+type UserRead = {
+    id: string
+    type: string
+    attributes: {
+        email: string
+        blocked: boolean
+        blocked_code: string|null
     }
 }
 
-export class GetUserInformation extends Request<UserInformationResponse> {
+export class GetUserInformation extends Request<FireFlyApiV1Response<UserRead>> {
     protected method = 'GET'
 
     protected get endpoint(): string {

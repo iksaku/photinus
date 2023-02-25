@@ -1,4 +1,4 @@
-import { cache, joinPath, mergeEntries, tap, token } from "./util"
+import { accessToken, cache, joinPath, mergeEntries, tap } from "./util"
 
 export abstract class Request<TResponse = object> {
     protected abstract method: string
@@ -7,7 +7,7 @@ export abstract class Request<TResponse = object> {
     public readonly query: URLSearchParams = new URLSearchParams()
     
     protected requiresAuthorization: boolean = true
-    protected _bearerToken?: string
+    protected bearerToken?: string
     protected body?: BodyInit
 
     protected get baseEndpoint(): string {
@@ -30,7 +30,7 @@ export abstract class Request<TResponse = object> {
     public withBearerToken(token?: string): this {
         if (!!token) {
             this.requiresAuthorization = true
-            this._bearerToken = token
+            this.bearerToken = token
         }
 
         return this
@@ -71,7 +71,7 @@ export abstract class Request<TResponse = object> {
         const headers = mergeEntries(this.defaultHeaders, this.headers)
         
         if (this.requiresAuthorization) {
-            headers.set('Authorization', `Bearer ${this._bearerToken ?? token()}`)
+            headers.set('Authorization', `Bearer ${this.bearerToken ?? accessToken()}`)
         }
 
         if (this.body instanceof FormData) {
