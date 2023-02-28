@@ -37,10 +37,6 @@ export function joinPath(...parts: string[]): string {
     )
 }
 
-export function mergeEntries<T extends object>(entry: T, ...entries: T[]): T {
-    return Object.assign(entry, ...entries)
-}
-
 export async function wait(ms?: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -61,4 +57,18 @@ export function formatNumber(number: number|string): string {
     return number
         .toString()
         .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+}
+
+export function firstDayOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), 1)
+}
+
+export function lastDayOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0)
+}
+
+export function toLaravelDate(date: Date): string {
+    const zeroPad = (number: number) => number.toString().padStart(2, '0')
+
+    return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`
 }

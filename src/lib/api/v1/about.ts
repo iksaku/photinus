@@ -1,4 +1,4 @@
-import { Request } from "../Request";
+import { Request } from "~/lib/Request"
 import { FireFlyApiV1Response } from "."
 
 type UserRead = {

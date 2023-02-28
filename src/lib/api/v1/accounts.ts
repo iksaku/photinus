@@ -1,5 +1,5 @@
+import { Request } from "~/lib/Request"
 import { FireFlyApiV1PaginatedResponse, FireFlyApiV1Response } from "."
-import { Request } from "../Request"
 
 type AccountRead = {
     id: string

@@ -1,10 +1,28 @@
-import { accessToken, cache, joinPath, mergeEntries, tap } from "./util"
+import { accessToken, cache, joinPath, tap } from "./util"
+
+function mergeIterables<T extends { [Symbol.iterator](): IterableIterator<[string, any]> }>(
+    callback: (result: Record<string, any>) => T,
+    ...entries: T[]
+): T {
+    return callback(
+        entries.reduce(
+            (carry, next) => ({
+                ...carry,
+                ...Object.fromEntries(next)
+            }),
+            {}
+        )
+    )
+}
+
+const mergeQueryParams = (...stores: URLSearchParams[]) => mergeIterables((result) => new URLSearchParams(result), ...stores)
+const mergeHeaders = (...stores: Headers[]) => mergeIterables((result) => new Headers(result), ...stores)
 
 export abstract class Request<TResponse = object> {
     protected abstract method: string
     
-    public readonly headers: Headers = new Headers()
-    public readonly query: URLSearchParams = new URLSearchParams()
+    protected headers: Headers = new Headers()
+    protected query: URLSearchParams = new URLSearchParams()
     
     protected requiresAuthorization: boolean = true
     protected bearerToken?: string
@@ -19,12 +37,31 @@ export abstract class Request<TResponse = object> {
     protected get defaultHeaders(): Headers {
         return new Headers({
             'Accept': 'application/json',
-            'Content-Type': 'application/json'
         })
     }
 
     protected get defaultQuery(): URLSearchParams {
         return new URLSearchParams()
+    }
+
+    public withHeaders(headers: Record<string, string>|Headers): this {
+        if (!(headers instanceof Headers)) {
+            headers = new Headers(headers)
+        }
+
+        this.headers = mergeHeaders(this.headers, headers)
+
+        return this
+    }
+
+    public withQueryParameters(params: Record<string, any>|URLSearchParams): this {
+        if (!(params instanceof URLSearchParams)) {
+            params = new URLSearchParams(params)
+        }
+
+        this.query = mergeQueryParams(this.query, (params as URLSearchParams))
+
+        return this
     }
 
     public withBearerToken(token?: string): this {
@@ -66,9 +103,9 @@ export abstract class Request<TResponse = object> {
 
     public async send(): Promise<TResponse> {
         const url = new URL(joinPath(this.baseEndpoint, this.endpoint), cache.get('firefly:domain'))
-        url.search = mergeEntries(this.defaultQuery, this.query).toString()
+        url.search = mergeQueryParams(this.defaultQuery, this.query).toString()
 
-        const headers = mergeEntries(this.defaultHeaders, this.headers)
+        const headers = mergeHeaders(this.defaultHeaders, this.headers)
         
         if (this.requiresAuthorization) {
             headers.set('Authorization', `Bearer ${this.bearerToken ?? accessToken()}`)

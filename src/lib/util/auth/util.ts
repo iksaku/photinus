@@ -4,7 +4,7 @@
 // circular dependency 😵‍💫.
 
 import { z } from "zod";
-import { GetUserInformation } from "../../api/about";
+import { GetUserInformation } from "../../api/v1/about";
 import { GetOauthToken } from "../../api/oauth";
 import { logout, setToken, setUser, token, Token } from ".";
 import { cache } from "../cache";
