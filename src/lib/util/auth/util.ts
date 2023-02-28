@@ -28,6 +28,7 @@ export async function updateToken(newToken: Token) {
         newToken = validator.parse(newToken)
     } catch {
         logout()
+        return
     }
 
     try {

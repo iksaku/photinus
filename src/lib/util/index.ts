@@ -41,14 +41,16 @@ export async function wait(ms?: number): Promise<void> {
     await new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-export function createCallbackTrackingSignal<T = any>(callback: any): Accessor<boolean> {
-    const [finished, setFinished] = createSignal(false)
+export function createLoadingSignal(callback: any): Accessor<boolean>[] {
+    const [loading, setLoading] = createSignal(true)
     value(async () => {
         await value(callback)
-        setFinished(true)
+        setLoading(false)
     })
 
-    return finished
+    const loaded = () => !loading()
+
+    return [loading, loaded]
 }
 
 export function formatNumber(number: number|string): string {
@@ -71,4 +73,12 @@ export function toLaravelDate(date: Date): string {
     const zeroPad = (number: number) => number.toString().padStart(2, '0')
 
     return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`
+}
+
+export type LaravelError = {
+    message: string
+    errors: {
+        [key: string]: string[]
+    }
+    response: Response
 }
