@@ -25,7 +25,7 @@ export default function Callback() {
                     client_secret: cache.get('firefly:oauth:clientSecret'),
                     code: params.code,
                     code_verifier: sessionCache.pull('firefly:oauth:codeVerifier'),
-                    redirect_uri: 'http://localhost:3000/login/callback'
+                    redirect_uri: `${import.meta.env.VITE_APP_URL}/login/callback`,
                 })
                 .send()
 
@@ -38,13 +38,13 @@ export default function Callback() {
 
     return (
         <Show when={loading()} fallback={<Navigate href="/login" />}>
-            <main class="min-h-screen flex flex-col items-center justify-center space-y-6 p-4">
+            <div class="min-h-screen flex flex-col items-center justify-center space-y-6 p-4">
                 <p class="text-center text-2xl">
                     🔐 Authenticating
                 </p>
 
                 <Spinner class="w-10 h-10" />
-            </main>
+            </div>
         </Show>
     )
 }

@@ -70,7 +70,7 @@ export default function Login() {
             'client_secret': data.clientSecret,
             'code_challenge': codeChallenge,
             'code_challenge_method': 'S256',
-            'redirect_uri': 'http://localhost:3000/login/callback',
+            'redirect_uri': `${import.meta.env.VITE_APP_URL}/login/callback`,
             state
         }).toString()
 
