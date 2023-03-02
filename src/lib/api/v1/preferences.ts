@@ -1,4 +1,4 @@
-import { Request } from "~/lib/Request"
+import { Request } from "~/lib/api/Request"
 import { FireFlyApiV1PaginatedResponse, FireFlyApiV1Response } from ".";
 
 type PreferenceRead<PreferenceData> = {

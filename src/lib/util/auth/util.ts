@@ -9,14 +9,6 @@ import { GetOauthToken } from "../../api/oauth";
 import { logout, setToken, setUser, token, Token } from ".";
 import { cache } from "../cache";
 
-async function fetchUserData(token?: Token) {
-    const response = await new GetUserInformation()
-        .withBearerToken(token?.access_token)
-        .send()
-
-    
-}
-
 export async function updateToken(newToken: Token) {
     try {
         const validator = z.object({

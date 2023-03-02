@@ -53,14 +53,6 @@ export function createLoadingSignal(callback: any): Accessor<boolean>[] {
     return [loading, loaded]
 }
 
-export function formatNumber(number: number|string): string {
-    // Add thousand separator to number
-    // Taken from: https://stackoverflow.com/a/2901298
-    return number
-        .toString()
-        .replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
-}
-
 export function firstDayOfMonth(date: Date): Date {
     return new Date(date.getFullYear(), date.getMonth(), 1)
 }
@@ -73,12 +65,4 @@ export function toLaravelDate(date: Date): string {
     const zeroPad = (number: number) => number.toString().padStart(2, '0')
 
     return `${date.getFullYear()}-${zeroPad(date.getMonth() + 1)}-${zeroPad(date.getDate())}`
-}
-
-export type LaravelError = {
-    message: string
-    errors: {
-        [key: string]: string[]
-    }
-    response: Response
 }

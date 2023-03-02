@@ -2,8 +2,7 @@ import { Show } from "solid-js";
 import { createRouteAction, redirect } from "solid-start";
 import { cache, sessionCache, str_random, value, zodErrorToLaravelFormat } from "~/lib/util";
 import { z, ZodError } from "zod";
-import { GuestMiddleware } from "~/lib/util/auth/middleware";
-import Panel, { ErrorPanel } from "~/components/Panel";
+import Panel from "~/components/Panel";
 import Input from "~/components/Input";
 
 const validator = z.object({
@@ -88,9 +87,9 @@ export default function Login() {
 
                 <Form class="space-y-6">
                     <Show when={!!callbackError}>
-                        <ErrorPanel>
+                        <Panel class="bg-red-500">
                             {callbackError}
-                        </ErrorPanel>
+                        </Panel>
                     </Show>
 
                     <Input

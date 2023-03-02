@@ -22,7 +22,7 @@ export default function Root() {
         <Meta charset="utf-8" />
         <Meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <Body class="bg-gray-200 min-h-screen">
+      <Body class="bg-gray-200">
         <Suspense>
           <ErrorBoundary>
             <InitializeAuthentication>

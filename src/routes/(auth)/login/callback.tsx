@@ -1,10 +1,10 @@
 import { Navigate, useSearchParams } from "solid-start";
 import { GetOauthToken } from "~/lib/api/oauth";
-import { cache, createLoadingSignal, LaravelError, sessionCache } from "~/lib/util";
+import { cache, createLoadingSignal, sessionCache } from "~/lib/util";
 import { updateToken } from "~/lib/util/auth/util";
-import { GuestMiddleware } from "~/lib/util/auth/middleware";
 import { Show } from "solid-js";
 import Spinner from "~/components/Spinner";
+import { LaravelError } from "~/lib/api/Request";
 
 export default function Callback() {
     const [loading] = createLoadingSignal(async () => {

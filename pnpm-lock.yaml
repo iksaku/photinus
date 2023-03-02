@@ -6,6 +6,7 @@ specifiers:
   '@tailwindcss/forms': ^0.5.3
   '@types/node': ^18.11.18
   autoprefixer: ^10.4.13
+  currency.js: ^2.0.4
   esbuild: ^0.14.54
   postcss: ^8.4.21
   solid-js: ^1.6.11
@@ -28,6 +29,7 @@ devDependencies:
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.7
   '@types/node': 18.13.0
   autoprefixer: 10.4.13_postcss@8.4.21
+  currency.js: 2.0.4
   esbuild: 0.14.54
   postcss: 8.4.21
   solid-start-node: 0.2.21_fkaudcwwrarg4rntqj5tcgyobu
@@ -1632,6 +1634,11 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
+
+  /currency.js/2.0.4:
+    resolution: {integrity: sha512-6/OplJYgJ0RUlli74d93HJ/OsKVBi8lB1+Z6eJYS1YZzBuIp4qKKHpJ7ad+GvTlWmLR/hLJOWTykN5Nm8NJ7+w==}
+    engines: {node: '>=4'}
+    dev: true
 
   /debug/2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}

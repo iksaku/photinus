@@ -1,38 +1,31 @@
-import { For, Suspense } from "solid-js";
-import { createRouteData, Outlet, useRouteData } from "solid-start";
+import { ComponentProps, For, ParentProps, Show, Suspense } from "solid-js";
+import { A, createRouteData, useRouteData } from "solid-start";
+import { ChevronRight } from "~/components/icons";
+import Panel from "~/components/Panel";
 import { GetAccount } from "~/lib/api/v1/accounts";
-import { GetCategory, ListCategories } from "~/lib/api/v1/categories";
+import { ListCategories } from "~/lib/api/v1/categories";
 import { GetPreference } from "~/lib/api/v1/preferences";
-import { firstDayOfMonth, formatNumber, lastDayOfMonth, logout, toLaravelDate, user } from "~/lib/util";
-import { AuthenticatedMiddleware } from "~/lib/util/auth/middleware";
+import { firstDayOfMonth, lastDayOfMonth, logout, toLaravelDate, user } from "~/lib/util";
 
 export function routeData() {
   const accounts = createRouteData(async () => {
     const response = await new GetPreference<number[]>('frontPageAccounts').send()
 
     const accounts = response.data.attributes.data.map((account) => new GetAccount(account).send())
-
-    return await Promise.all(accounts)
+    
+    return (await Promise.all(accounts))
+      .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
   }, { key: 'accounts' })
 
   const categories = createRouteData(async () => {
     const now = new Date()
 
-    const response = await new ListCategories()
+    return await new ListCategories()
       .withQueryParameters({
         start: toLaravelDate(firstDayOfMonth(now)),
         end: toLaravelDate(lastDayOfMonth(now))
       })
       .send()
-
-    return response.data
-      .map((category) => {
-        return {
-          name: category.attributes.name,
-          spent: formatNumber(category.attributes.spent[0]?.sum ?? '0.00'),
-          earned: formatNumber(category.attributes.earned[0]?.sum ?? '0.00'),
-        }
-      })
   }, { key: 'categories' })
 
   return { accounts, categories }
@@ -42,7 +35,7 @@ export default function Home() {
   const { accounts, categories } = useRouteData<typeof routeData>()
 
   return (
-    <>
+    <main class="space-y-6">
       <div>
         <h1>Home</h1>
         <p>Welcome back {user()?.email}!</p>
@@ -50,27 +43,112 @@ export default function Home() {
         <button onClick={() => logout()}>Logout</button>
       </div>
 
-      <Suspense fallback={<p>🗃️ Loading categories...</p>}>
-        <ul>
-          <For each={categories()}>
-            {(category) => (
-              <li>{category.name} (Earned: {category.earned} | Spent: {category.spent})</li>
-            )}
-          </For>
-        </ul>
-      </Suspense>
+      <Section label="🏦 Accounts">
+        <Suspense fallback={<SectionListPlaceholder />}>
+          <ul class="divide-y divide-gray-200">
+            <For each={accounts()}>
+              {(account) => (
+                <li>
+                  <A href="#" class="block hover:bg-gray-50">
+                    <div class="flex items-center p-4 sm:px-6">
+                      <div class="flex-1">
+                        <p>
+                          {account.data.name}
+                        </p>
+                        <p class="text-sm">
+                          Balance:
+                          <span class="ml-1" classList={{
+                            'text-green-500': account.data.current_balance.intValue > 0,
+                            'text-red-500': account.data.current_balance.intValue < 0
+                          }}>
+                            {account.data.current_balance.format()}
+                          </span>
+                        </p>
+                      </div>
+                      <ChevronRight class="w-5 h-5 text-gray-400" />
+                    </div>
+                  </A>
+                </li>
+              )}
+            </For>
+          </ul>
+        </Suspense>
+      </Section>
 
-      <Suspense fallback={<p>🏦 Loading accounts...</p>}>
-        <ul>
-          <For each={accounts()}>
-            {(account) => (
-              <li>
-                {account.data.attributes.name} ({formatNumber(account.data.attributes.current_balance)})
-              </li>
-            )}
-          </For>
-        </ul>
-      </Suspense>
-    </>
+      <Section label="🏷️ Categories">
+        <Suspense fallback={<SectionListPlaceholder />}>
+          <ul class="divide-y divide-gray-200">
+            <For each={categories()?.data}>
+              {(category) => (
+                <li>
+                  <A href="#" class="block hover:bg-gray-50">
+                    <div class="flex items-center p-4 sm:px-6">
+                      <div class="flex-1">
+                        <p>
+                          {category.name}
+                        </p>
+                        <p class="text-sm">
+                          Earned:
+                          <Show when={!!category.earned} fallback={<span class="ml-1 italic">No data</span>}>
+                            <span class="ml-1 text-green-500">
+                              {category.earned!.format()}
+                            </span>
+                          </Show>
+                        </p>
+                        <p class="text-sm">
+                          Spent:
+                          <Show when={!!category.spent} fallback={<span class="ml-1 italic">No data</span>}>
+                            <span class="ml-1 text-red-500">
+                              {category.spent!.format()}
+                            </span>
+                          </Show>
+                        </p>
+                      </div>
+                      <ChevronRight class="w-5 h-5 text-gray-400" />
+                    </div>
+                  </A>
+                </li>
+              )}
+            </For>
+          </ul>
+        </Suspense>
+      </Section>
+    </main>
   );
+}
+
+function Section(props: ParentProps<{ label: string }>) {
+  return (
+    <div class="space-y-1">
+      <p class="text-gray-800 text-xl font-medium">
+        {props.label}
+      </p>
+      <Panel stretch={true}>
+        {props.children}
+      </Panel>
+    </div>
+  )
+}
+
+function SectionListPlaceholder() {
+  return (
+    <ul class="divide-y divide-gray-200">
+      <For each={new Array(3)}>
+        {(_, index) => (
+          <li class="animate-pulse opacity-75" style={{ 'animation-delay': `${500 * index()}ms` }}>
+            <div class="flex items-center p-4 sm:px-6">
+              <div class="flex-1 space-y-3">
+                <div class="w-11/12">
+                  <div class="bg-slate-600 h-4 rounded-lg">&nbsp;</div>
+                </div>
+                <div class="w-1/3">
+                  <div class="bg-slate-600 h-4 rounded-lg">&nbsp;</div>
+                </div>
+              </div>
+            </div>
+          </li>
+        )}
+      </For>
+    </ul>
+  )
 }

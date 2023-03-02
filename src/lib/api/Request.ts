@@ -1,4 +1,4 @@
-import { accessToken, cache, joinPath, tap } from "./util"
+import { accessToken, cache, joinPath, tap } from "../util"
 
 function mergeIterables<T extends { [Symbol.iterator](): IterableIterator<[string, any]> }>(
     callback: (result: Record<string, any>) => T,
@@ -18,7 +18,15 @@ function mergeIterables<T extends { [Symbol.iterator](): IterableIterator<[strin
 const mergeQueryParams = (...stores: URLSearchParams[]) => mergeIterables((result) => new URLSearchParams(result), ...stores)
 const mergeHeaders = (...stores: Headers[]) => mergeIterables((result) => new Headers(result), ...stores)
 
-export abstract class Request<TResponse = object> {
+export type LaravelError = {
+    message: string
+    errors: {
+        [key: string]: string[]
+    }
+    response: Response
+}
+
+export abstract class Request<TResponse extends object = object> {
     protected abstract method: string
     
     protected headers: Headers = new Headers()
@@ -129,9 +137,13 @@ export abstract class Request<TResponse = object> {
             throw {
                 ...data,
                 response
-            }
+            } as LaravelError
         }
 
+        return this.transform(data)
+    }
+
+    protected transform(data: any): any {
         return data
     }
 }

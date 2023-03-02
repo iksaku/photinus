@@ -1,25 +1,21 @@
-import { ParentProps } from "solid-js";
+import { ComponentProps, ParentProps } from "solid-js";
 
-function BasePanel(props: ParentProps<{ class: string }>) {
+export default function Panel(props: ParentProps<ComponentProps<"div"> & { stretch?: boolean }>) {
+    let { children, stretch = false, class: classes, ...attributes } = props
+
+    if (!classes?.includes('bg-')) {
+        classes = `bg-white ${classes ?? ''}`
+    }
+
     return (
-        <div class={`px-4 py-5 sm:p-6 rounded-lg shadow overflow-hidden ${props.class}`}>
-            {props.children}
+        <div
+            class={`rounded-lg shadow overflow-hidden ${classes}`}
+            classList={{
+                'px-4 py-5 sm:p-6': !stretch
+            }}
+            {...attributes}
+        >
+            {children}
         </div>
-    )
-}
-
-export function ErrorPanel(props: ParentProps<{ class?: string }>) {
-    return (
-        <BasePanel class={`bg-red-200 ${props.class ?? ''}`}>
-            {props.children}
-        </BasePanel>
-    )
-}
-
-export default function Panel(props: ParentProps<{ class?: string }>) {
-    return (
-        <BasePanel class={`bg-white ${props.class ?? ''}`}>
-            {props.children}
-        </BasePanel>
     )
 }
