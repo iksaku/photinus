@@ -143,7 +143,7 @@ export abstract class Request<TResponse extends object = object> {
         return this.transform(data)
     }
 
-    protected transform(data: any): any {
-        return data
+    protected transform(response: any): any {
+        return response
     }
 }

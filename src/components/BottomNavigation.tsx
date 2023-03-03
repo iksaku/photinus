@@ -1,14 +1,20 @@
-import { A } from "solid-start";
-import { HomeOutline } from "./icons";
+import { Accessor, Show } from "solid-js";
+import { A, useMatch } from "solid-start";
+import { HomeOutline, HomeSolid } from "./icons";
 
 export default function BottomNavigation() {
-    // TOOD: Bottom navigation (Investigate CSS safe area)
-
     return (
-        <div class="sticky bottom-0 w-full bg-white">
-            <div class="min-w-full h-full flex items-center justify-around">
+        <div class="sticky bottom-0 w-full bg-white text-black border border-t-gray-200">
+            <div
+                class="min-w-full h-full flex items-center justify-around"
+                style={{
+                    'margin-bottom': 'env(safe-area-inset-bottom)'
+                }}
+            >
                 <NavigationIcon href="/">
-                    <HomeOutline class="w-6 h-6" />
+                    <Show when={useMatch(() => '/')()} fallback={<HomeOutline class="w-6 h-6" />}>
+                        <HomeSolid class="w-6 h-6" />
+                    </Show>
                 </NavigationIcon>
                 <NavigationIcon href="/">
                     <HomeOutline class="w-6 h-6" />
@@ -28,7 +34,7 @@ export function NavigationIcon(props: Parameters<typeof A>[0]) {
     const { children, ...attributes } = props
 
     return (
-        <A class="p-6" {...attributes}>
+        <A class="px-4 py-3" {...attributes}>
             {children}
         </A>
     )

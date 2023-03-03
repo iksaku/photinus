@@ -1,4 +1,4 @@
-import { Show } from "solid-js";
+import { createEffect, Show } from "solid-js";
 import { createRouteAction, redirect } from "solid-start";
 import { cache, sessionCache, str_random, value, zodErrorToLaravelFormat } from "~/lib/util";
 import { z, ZodError } from "zod";
@@ -99,7 +99,7 @@ export default function Login() {
                         type="url"
                         value={domain}
                     />
-                    <Show when={!!status.error?.errors.domain}>
+                    <Show when={!!status.error?.errors?.domain}>
                         <span>{status.error.errors.domain[0]}</span>
                     </Show>
 
@@ -111,7 +111,7 @@ export default function Login() {
                         inputMode="numeric"
                         value={clientId}
                     />
-                    <Show when={!!status.error?.errors.clientId}>
+                    <Show when={!!status.error?.errors?.clientId}>
                         <span>{status.error.errors.clientId[0]}</span>
                     </Show>
 
