@@ -1,6 +1,6 @@
-import { Accessor, Show } from "solid-js";
+import { Show } from "solid-js";
 import { A, useMatch } from "solid-start";
-import { HomeOutline, HomeSolid } from "./icons";
+import { CogOutline, CogSolid, HomeOutline, HomeSolid } from "./icons";
 
 export default function BottomNavigation() {
     return (
@@ -11,20 +11,8 @@ export default function BottomNavigation() {
                     'margin-bottom': 'env(safe-area-inset-bottom)'
                 }}
             >
-                <NavigationIcon href="/">
-                    <Show when={useMatch(() => '/')()} fallback={<HomeOutline class="w-6 h-6" />}>
-                        <HomeSolid class="w-6 h-6" />
-                    </Show>
-                </NavigationIcon>
-                <NavigationIcon href="/">
-                    <HomeOutline class="w-6 h-6" />
-                </NavigationIcon>
-                <NavigationIcon href="/">
-                    <HomeOutline class="w-6 h-6" />
-                </NavigationIcon>
-                <NavigationIcon href="/">
-                    <HomeOutline class="w-6 h-6" />
-                </NavigationIcon>
+                <HomeRoute />
+                <SettingsRoute />
             </div>
         </div>
     )
@@ -37,5 +25,29 @@ export function NavigationIcon(props: Parameters<typeof A>[0]) {
         <A class="px-4 py-3" {...attributes}>
             {children}
         </A>
+    )
+}
+
+export function HomeRoute() {
+    const isActive = useMatch(() => "/")
+
+    return (
+        <NavigationIcon href="/">
+            <Show when={isActive()} fallback={<HomeOutline class="w-6 h-6" />}>
+                <HomeSolid class="w-6 h-6" />
+            </Show>
+        </NavigationIcon>
+    )
+}
+
+export function SettingsRoute() {
+    const isActive = useMatch(() => "/settings")
+
+    return (
+        <NavigationIcon href="/settings">
+            <Show when={isActive()} fallback={<CogOutline class="w-6 h-6" />}>
+                <CogSolid class="w-6 h-6" />
+            </Show>
+        </NavigationIcon>
     )
 }

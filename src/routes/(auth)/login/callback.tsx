@@ -40,7 +40,7 @@ export default function Callback() {
         <Show when={loading()} fallback={<Navigate href="/login" />}>
             <div class="min-h-screen flex flex-col items-center justify-center space-y-6 p-4">
                 <p class="text-center text-2xl">
-                    🔐 Authenticating
+                    Authenticating
                 </p>
 
                 <Spinner class="w-10 h-10" />
