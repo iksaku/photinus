@@ -16,8 +16,11 @@ import './root.css'
 import { InitializeAuthentication } from "./lib/util/auth/middleware";
 import { useRegisterSW } from "virtual:pwa-register/solid";
 import { pwaInfo } from "virtual:pwa-info"
+import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 
 export default function Root() {
+  const queryClient = new QueryClient()
+
   useRegisterSW({ immediate: true })
 
   return (
@@ -34,11 +37,13 @@ export default function Root() {
       <Body class="bg-gray-200">
         <Suspense>
           <ErrorBoundary>
-            <InitializeAuthentication>
-              <Routes>
-                <FileRoutes />
-              </Routes>
-            </InitializeAuthentication>
+            <QueryClientProvider client={queryClient}>
+              <InitializeAuthentication>
+                <Routes>
+                  <FileRoutes />
+                </Routes>
+              </InitializeAuthentication>
+            </QueryClientProvider>
           </ErrorBoundary>
         </Suspense>
         <Scripts />

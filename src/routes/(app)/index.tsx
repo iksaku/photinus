@@ -1,5 +1,6 @@
+import { createQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense } from "solid-js";
-import { A, createRouteData, useRouteData } from "solid-start";
+import { A, useRouteData } from "solid-start";
 import { ChevronRight } from "~/components/icons";
 import Page from "~/components/Page";
 import Section from "~/components/Section";
@@ -9,25 +10,31 @@ import { GetPreference } from "~/lib/api/v1/preferences";
 import { firstDayOfMonth, lastDayOfMonth, toLaravelDate } from "~/lib/util";
 
 export function routeData() {
-  const accounts = createRouteData(async () => {
-    const response = await new GetPreference<number[]>('frontPageAccounts').send()
+  const accounts = createQuery(
+    () => ['home.accounts'],
+    async () => {
+      const response = await new GetPreference<number[]>('frontPageAccounts').send()
 
-    const accounts = response.data.attributes.data.map((account) => new GetAccount(account).send())
-    
-    return (await Promise.all(accounts))
-      .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
-  }, { key: 'accounts' })
+      const accounts = response.data.attributes.data.map((account) => new GetAccount(account).send())
 
-  const categories = createRouteData(async () => {
-    const now = new Date()
+      return (await Promise.all(accounts))
+        .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+    }
+  )
 
-    return await new ListCategories()
-      .withQueryParameters({
-        start: toLaravelDate(firstDayOfMonth(now)),
-        end: toLaravelDate(lastDayOfMonth(now))
-      })
-      .send()
-  }, { key: 'categories' })
+  const categories = createQuery(
+    () => ['categories.index'],
+    async () => {
+      const now = new Date()
+
+      return await new ListCategories()
+        .withQueryParameters({
+          start: toLaravelDate(firstDayOfMonth(now)),
+          end: toLaravelDate(lastDayOfMonth(now))
+        })
+        .send()
+    }
+  )
 
   return { accounts, categories }
 }
@@ -41,7 +48,7 @@ export default function Home() {
         <Section label="Accounts">
           <Suspense fallback={<SectionListPlaceholder />}>
             <ul class="divide-y divide-gray-200">
-              <For each={accounts()}>
+              <For each={accounts.data}>
                 {(account) => (
                   <li>
                     <A href="#" class="block hover:bg-gray-50">
@@ -73,7 +80,7 @@ export default function Home() {
         <Section label="Categories">
           <Suspense fallback={<SectionListPlaceholder />}>
             <ul class="divide-y divide-gray-200">
-              <For each={categories()?.data}>
+              <For each={categories.data?.data}>
                 {(category) => (
                   <li>
                     <A href="#" class="block hover:bg-gray-50">

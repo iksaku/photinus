@@ -33,7 +33,8 @@ export function joinPath(...parts: string[]): string {
             // Remove leading slash
             .replace(/^\/*/, '')
             // Remove trailing slash
-            .replace(/\/*$/, '')
+            .replace(/\/*$/, ''),
+        ''
     )
 }
 
