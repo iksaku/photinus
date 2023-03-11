@@ -1,4 +1,6 @@
 export * from './ArrowRightOnRectangle'
+export * from './ArrowTopRightOnSquare'
 export * from './Chevron'
 export * from './Cog'
 export * from './Home'
+export * from './User'

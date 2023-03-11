@@ -21,7 +21,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/solid-query";
 export default function Root() {
   const queryClient = new QueryClient()
 
-  useRegisterSW({ immediate: true })
+  useRegisterSW()
 
   return (
     <Html lang="en" class="scroll-smooth">

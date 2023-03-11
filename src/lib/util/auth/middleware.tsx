@@ -1,16 +1,12 @@
 import { ParentProps, Show } from "solid-js";
 import Spinner from "~/components/Spinner";
-import { isAuthenticated, token } from ".";
-import { cache, createLoadingSignal } from "..";
+import { isAuthenticated } from ".";
+import { createLoadingSignal } from "..";
 import { RedirectMiddleware } from "../middleware"
-import { updateToken } from "./util";
+import { attemptLogin } from "./util";
 
 export const InitializeAuthentication = (props: ParentProps) => {
-    const [initializing] = createLoadingSignal(async () => {
-        if (!token() && cache.has('firefly:token')) {
-            await updateToken(cache.get('firefly:token'))
-        }
-    })
+    const [initializing] = createLoadingSignal(attemptLogin)
 
     return (
         <Show when={initializing()} fallback={props.children}>

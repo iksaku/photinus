@@ -52,7 +52,7 @@ function transform(data: CategoryRead): CategoryTransform {
     }
 }
 
-export class ListCategories extends Request<FireFlyApiV1PaginatedResponse<CategoryTransform>> {
+export class GetCategoryList extends Request<FireFlyApiV1PaginatedResponse<CategoryTransform>> {
     protected method = 'GET'
 
     protected get endpoint(): string {

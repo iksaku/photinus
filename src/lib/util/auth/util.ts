@@ -6,70 +6,68 @@
 import { z } from "zod";
 import { GetUserInformation } from "../../api/v1/about";
 import { GetOauthToken } from "../../api/oauth";
-import { logout, setToken, setUser, token, Token } from ".";
-import { cache } from "../cache";
+import { logout, setToken, setUser } from ".";
+import { cache, sessionCache } from "../cache";
+import { LaravelError } from "~/lib/api/Request";
 
-export async function updateToken(newToken: Token) {
-    try {
-        const validator = z.object({
-            access_token: z.string().min(1),
-            refresh_token: z.string().min(1)
-        })
+async function fetchUserInformation(token: string) {
+    setUser(
+        await new GetUserInformation()
+            .withBearerToken(token)
+            .send()
+    )
+}
 
-        // Always remove unecessary data
-        newToken = validator.parse(newToken)
-    } catch {
-        logout()
+export async function attemptLogin(token?: Awaited<ReturnType<GetOauthToken['send']>>) {
+    if (!token && !cache.has('firefly:token')) {
         return
     }
 
-    try {
-        const response = await new GetUserInformation()
-            .withBearerToken(newToken.access_token)
-            .send()
+    if (!token) {
+        try {
+            const validator = z.object({
+                access_token: z.string().min(1),
+                refresh_token: z.string().min(1)
+            })
 
-        cache.put('firefly:token', newToken)
-        
-        // Update the token in memory first to make sure future
-        // requests from authentication redirection use the
-        // new tokens.
-        setToken(newToken)
-        setUser({
-            id: parseInt(response.data.id),
-            email: response.data.attributes.email
-        })
-    } catch {
-        // TODO: Way to differentiate token expiration from other types of issues
-        await refreshToken()
+            token = validator.parse(cache.get('firefly:token'))
+        } catch {
+            logout()
+            return
+        }
+    }
+
+    try {
+        await fetchUserInformation(token.access_token)
+        setToken(token)
+        cache.put('firefly:token', token)
+    } catch (e) {
+        if ((e as LaravelError).response.status !== 401 && (e as LaravelError).response.status !== 403) {
+            sessionCache.put('firefly:oauth:callbackError', `Unknown error status [${(e as LaravelError).response.status}] from server.`)
+            return
+        }
+
+        await attemptRefreshLogin(token.refresh_token)
     }
 }
 
-export async function refreshToken(): Promise<void> {
-    if (!refreshToken()) {
-        logout()
-    }
+export async function attemptRefreshLogin(refreshToken: string) {
+    let token
 
     try {
-        const newToken = await new GetOauthToken()
+        token = await new GetOauthToken()
             .withFormData({
                 'grant_type': 'refresh_token',
                 'client_id': cache.get('firefly:oauth:clientId'),
-                'refresh_token': refreshToken(),
+                'client_secret': cache.get('firefly:oauth:clientSecret'),
+                'refresh_token': refreshToken,
             })
             .send()
 
-        updateToken(newToken)
-    } finally {
+        await fetchUserInformation(token.access_token)
+        setToken(token)
+        cache.put('firefly:token', token)
+    } catch {
         logout()
-    }
-}
-
-export async function initializeToken() {
-    if (!!token()) {
-        return
-    }
-
-    if (cache.has('firefly:token')) {
-        await updateToken(cache.get('firefly:token'))
     }
 }

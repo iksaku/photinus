@@ -1,7 +1,7 @@
 import { Navigate, useSearchParams } from "solid-start";
 import { GetOauthToken } from "~/lib/api/oauth";
 import { cache, createLoadingSignal, sessionCache } from "~/lib/util";
-import { updateToken } from "~/lib/util/auth/util";
+import { attemptLogin } from "~/lib/util/auth/util";
 import { Show } from "solid-js";
 import Spinner from "~/components/Spinner";
 import { LaravelError } from "~/lib/api/Request";
@@ -18,7 +18,7 @@ export default function Callback() {
         }
 
         try {
-            const data = await new GetOauthToken()
+            const token = await new GetOauthToken()
                 .withFormData({
                     grant_type: 'authorization_code',
                     client_id: cache.get('firefly:oauth:clientId'),
@@ -29,7 +29,7 @@ export default function Callback() {
                 })
                 .send()
 
-            await updateToken(data)
+            await attemptLogin(token)
         } catch (e) {
             sessionCache.put('firefly:oauth:callbackError', (e as LaravelError).message)
             return

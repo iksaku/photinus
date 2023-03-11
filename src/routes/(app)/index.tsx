@@ -1,15 +1,15 @@
 import { createQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense } from "solid-js";
-import { A, useRouteData } from "solid-start";
+import { A } from "solid-start";
 import { ChevronRight } from "~/components/icons";
 import Page from "~/components/Page";
 import Section from "~/components/Section";
 import { GetAccount } from "~/lib/api/v1/accounts";
-import { ListCategories } from "~/lib/api/v1/categories";
+import { GetCategoryList } from "~/lib/api/v1/categories";
 import { GetPreference } from "~/lib/api/v1/preferences";
 import { firstDayOfMonth, lastDayOfMonth, toLaravelDate } from "~/lib/util";
 
-export function routeData() {
+export default function Home() {
   const accounts = createQuery(
     () => ['home.accounts'],
     async () => {
@@ -27,20 +27,14 @@ export function routeData() {
     async () => {
       const now = new Date()
 
-      return await new ListCategories()
+      return await new GetCategoryList()
         .withQueryParameters({
           start: toLaravelDate(firstDayOfMonth(now)),
           end: toLaravelDate(lastDayOfMonth(now))
         })
         .send()
-    }
+    },
   )
-
-  return { accounts, categories }
-}
-
-export default function Home() {
-  const { accounts, categories } = useRouteData<typeof routeData>()
 
   return (
     <Page title="Home">

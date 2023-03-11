@@ -43,7 +43,7 @@ function transform(data: AccountRead): AccountTransform {
     }
 }
 
-export class ListAccounts extends Request<FireFlyApiV1PaginatedResponse<AccountTransform>> {
+export class GetAccountList extends Request<FireFlyApiV1PaginatedResponse<AccountTransform>> {
     protected method = 'GET'
 
     protected get endpoint(): string {

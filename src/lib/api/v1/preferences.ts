@@ -10,7 +10,7 @@ type PreferenceRead<PreferenceData> = {
     }
 }
 
-export class ListPreferences<PreferenceData = any> extends Request<FireFlyApiV1PaginatedResponse<PreferenceRead<PreferenceData>>> {
+export class GetPreferenceList<PreferenceData = any> extends Request<FireFlyApiV1PaginatedResponse<PreferenceRead<PreferenceData>>> {
     protected method = 'GET'
 
     protected get endpoint(): string {
