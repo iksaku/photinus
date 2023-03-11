@@ -6,7 +6,7 @@ export default function AppLayout() {
     return (
         <AuthenticatedMiddleware>
             <div class="relative min-h-screen flex flex-col justify-between">
-                <div class="w-full min-h-full p-4">
+                <div class="w-full p-4">
                     <Outlet />
                 </div>
 
