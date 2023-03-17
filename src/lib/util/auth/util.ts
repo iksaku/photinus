@@ -11,11 +11,10 @@ import { cache, sessionCache } from "../cache";
 import { LaravelError } from "~/lib/api/Request";
 
 async function fetchUserInformation(token: string) {
-    setUser(
-        await new GetUserInformation()
-            .withBearerToken(token)
-            .send()
-    )
+    const response = await new GetUserInformation()
+        .withBearerToken(token)
+        .send()
+    setUser(response.data)
 }
 
 export async function attemptLogin(token?: Awaited<ReturnType<GetOauthToken['send']>>) {

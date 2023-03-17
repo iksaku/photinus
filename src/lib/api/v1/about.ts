@@ -8,6 +8,7 @@ type UserRead = {
         email: string
         blocked: boolean
         blocked_code: string|null
+        role: string|null
     }
 }
 
@@ -16,6 +17,7 @@ type UserTransform = {
     email: string
     blocked: boolean
     blocked_code: string|null
+    is_admin: boolean
 }
 
 export class GetUserInformation extends Request<FireFlyApiV1Response<UserTransform>> {
@@ -33,6 +35,7 @@ export class GetUserInformation extends Request<FireFlyApiV1Response<UserTransfo
                 email: response.data.attributes.email,
                 blocked: response.data.attributes.blocked,
                 blocked_code: response.data.attributes.blocked_code,
+                is_admin: response.data.attributes.role === 'owner'
             } satisfies UserTransform
         }
     }

@@ -1,4 +1,4 @@
-import { Show } from "solid-js";
+import { Accessor, JSX, Show } from "solid-js";
 import { A, useMatch } from "solid-start";
 import { CogOutline, CogSolid, HomeOutline, HomeSolid } from "./icons";
 
@@ -18,36 +18,36 @@ export default function BottomNavigation() {
     )
 }
 
-export function NavigationIcon(props: Parameters<typeof A>[0]) {
-    const { children, ...attributes } = props
+function NavigationIcon(props: Parameters<typeof A>[0] & { isActive: ReturnType<typeof useMatch>, fallback: JSX.Element }) {
+    const { isActive, fallback, children, ...attributes } = props
 
     return (
-        <A class="px-4 py-3" {...attributes}>
-            {children}
+        <A
+            class="px-4 py-3"
+            classList={{
+                'border-t-2 border-blue-500': !!isActive()
+            }}
+            {...attributes}
+        >
+            <Show when={isActive()} fallback={fallback}>
+                {children}
+            </Show>
         </A>
     )
 }
 
-export function HomeRoute() {
-    const isActive = useMatch(() => "/")
-
+function HomeRoute() {
     return (
-        <NavigationIcon href="/">
-            <Show when={isActive()} fallback={<HomeOutline class="w-6 h-6" />}>
-                <HomeSolid class="w-6 h-6" />
-            </Show>
+        <NavigationIcon href="/" isActive={useMatch(() => '/')} fallback={<HomeOutline class="w-6 h-6" />}>
+            <HomeSolid class="w-6 h-6" />
         </NavigationIcon>
     )
 }
 
-export function SettingsRoute() {
-    const isActive = useMatch(() => "/settings")
-
+function SettingsRoute() {
     return (
-        <NavigationIcon href="/settings">
-            <Show when={isActive()} fallback={<CogOutline class="w-6 h-6" />}>
-                <CogSolid class="w-6 h-6" />
-            </Show>
+        <NavigationIcon href="/settings" isActive={useMatch(() => '/settings')} fallback={<CogOutline class="w-6 h-6" />}>
+            <CogSolid class="w-6 h-6" />
         </NavigationIcon>
     )
 }

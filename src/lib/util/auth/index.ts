@@ -2,7 +2,7 @@ import { createSignal } from "solid-js";
 import { GetUserInformation } from "~/lib/api/v1/about";
 import { cache } from "../cache";
 
-export const [user, setUser] = createSignal<Awaited<ReturnType<GetUserInformation['send']>>>()
+export const [user, setUser] = createSignal<Awaited<ReturnType<GetUserInformation['send']>>['data']>()
 
 export const isAuthenticated = () => !!user()
 
