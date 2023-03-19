@@ -1,21 +1,18 @@
-import { ComponentProps, ParentProps } from "solid-js";
+import { ComponentProps, ParentProps, splitProps } from "solid-js";
 
-export default function Panel(props: ParentProps<ComponentProps<"div"> & { stretch?: boolean }>) {
-    let { children, stretch = false, class: classes, ...attributes } = props
-
-    if (!classes?.includes('bg-')) {
-        classes = `bg-white ${classes ?? ''}`
-    }
+export default function Panel(_props: ParentProps<ComponentProps<"div"> & { stretch?: boolean }>) {
+    const [props, attributes] = splitProps(_props, ['stretch', 'class', 'children'])
 
     return (
         <div
-            class={`rounded-lg shadow overflow-hidden ${classes}`}
+            class={`rounded-lg shadow contain-paint ${props.class}`}
             classList={{
-                'px-4 py-5 sm:p-6': !stretch
+                'bg-white': !props.class?.includes('bg-'),
+                'p-4 sm:p-6': !(props.stretch ?? false)
             }}
             {...attributes}
         >
-            {children}
+            {props.children}
         </div>
     )
 }

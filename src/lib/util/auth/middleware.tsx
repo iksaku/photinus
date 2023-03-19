@@ -1,5 +1,5 @@
 import { ParentProps, Show } from "solid-js";
-import Spinner from "~/components/Spinner";
+import { LoadingPage } from "~/components/Page";
 import { isAuthenticated } from ".";
 import { createLoadingSignal } from "..";
 import { RedirectMiddleware } from "../middleware"
@@ -10,9 +10,7 @@ export const InitializeAuthentication = (props: ParentProps) => {
 
     return (
         <Show when={initializing()} fallback={props.children}>
-            <main class="min-h-screen flex flex-col items-center justify-center space-y-6 p-4">
-                <Spinner class="w-10 h-10" />
-            </main>
+            <LoadingPage />
         </Show>
     )
 }

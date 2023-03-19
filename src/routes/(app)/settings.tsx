@@ -1,8 +1,8 @@
 import { Show } from "solid-js";
 import { A } from "solid-start";
 import { ArrowRightOnRectangle, CogOutline, LockClosedOutline, UserOutline } from "~/components/icons";
-import { ArrowTopRightOnSquareOutline } from "~/components/icons/ArrowTopRightOnSquare";
-import CurrencyDollarOutline from "~/components/icons/CurrencyDollar";
+import { ArrowTopRightOnSquareOutline } from "~/components/icons/ArrowOnSquare";
+import CurrencyDollarOutline from "~/components/icons/Currency";
 import Page from "~/components/Page";
 import Section from "~/components/Section";
 import { cache, logout, user } from "~/lib/util";

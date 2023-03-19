@@ -1,3 +1,5 @@
+import { Request } from "../Request"
+
 export type FireFlyApiV1Response<Data = Record<string, any>> = {
     data: Data
 }
@@ -14,3 +16,5 @@ export type FireFlyApiV1PaginatedResponse<Data = Record<string, any>> = {
         }
     }
 }
+
+export type ApiResponse<TRequest extends Request> = Awaited<ReturnType<TRequest['send']>>

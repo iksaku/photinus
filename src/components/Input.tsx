@@ -1,24 +1,18 @@
-import { ComponentProps, ParentProps } from "solid-js"
+import { ComponentProps, splitProps } from "solid-js"
 
-type Props = ParentProps<ComponentProps<"input">> & {
-    id: string
-    type: string
-    label: string
-}
-
-export default function Input(props: Props) {
-    const { id, type = "text", label, ...attributes } = props
+export default function Input(_props: ComponentProps<'input'> & { id: string, label: string }) {
+    const [props, attributes] = splitProps(_props, ['id', 'type', 'label'])
 
     return (
         <div>
-            <label for={id}>
-                {label}
+            <label for={props.id}>
+                {props.label}
             </label>
 
             <div class="mt-1">
                 <input
-                    id={id}
-                    type="text"
+                    id={props.id}
+                    type={props.type ?? 'text'}
                     class="block w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                     {...attributes}
                 />

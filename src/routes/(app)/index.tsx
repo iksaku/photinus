@@ -1,8 +1,9 @@
 import { createQuery } from "@tanstack/solid-query";
-import { For, Show, Suspense } from "solid-js";
+import { For, ParentProps, Show, Suspense } from "solid-js";
 import { A } from "solid-start";
-import { ChevronRight } from "~/components/icons";
+import { ChevronRightOutline } from "~/components/icons";
 import Page from "~/components/Page";
+import AccountListItem, { AccountListPlaceholder } from "~/components/AccountListItem";
 import Section from "~/components/Section";
 import { GetAccount } from "~/lib/api/v1/accounts";
 import { GetCategoryList } from "~/lib/api/v1/categories";
@@ -10,60 +11,36 @@ import { GetPreference } from "~/lib/api/v1/preferences";
 import { firstDayOfMonth, lastDayOfMonth, toLaravelDate } from "~/lib/util";
 
 export default function Home() {
-  const accounts = createQuery(
-    () => ['home.accounts'],
-    async () => {
-      const response = await new GetPreference<number[]>('frontPageAccounts').send()
+  const accounts = createQuery(() => ['home.accounts'], async () => {
+    const response = await new GetPreference<number[]>('frontPageAccounts').send()
 
-      const accounts = response.data.attributes.data.map((account) => new GetAccount(account).send())
+    const accounts = response.data.attributes.data.map((account) => new GetAccount(account).send())
 
-      return (await Promise.all(accounts))
-        .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
-    }
-  )
+    return (await Promise.all(accounts))
+      .sort((a, b) => (a.data.order ?? 0) - (b.data.order ?? 0))
+  })
 
-  const categories = createQuery(
-    () => ['categories.index'],
-    async () => {
-      const now = new Date()
+  const categories = createQuery(() => ['categories.index'], async () => {
+    const now = new Date()
 
-      return await new GetCategoryList()
-        .withQueryParameters({
-          start: toLaravelDate(firstDayOfMonth(now)),
-          end: toLaravelDate(lastDayOfMonth(now))
-        })
-        .send()
-    },
-  )
+    return await new GetCategoryList()
+      .withQueryParameters({
+        start: toLaravelDate(firstDayOfMonth(now)),
+        end: toLaravelDate(lastDayOfMonth(now))
+      })
+      .send()
+  })
 
   return (
     <Page title="Home">
       <div class="space-y-6">
         <Section label="Accounts">
-          <Suspense fallback={<SectionListPlaceholder />}>
+          <Suspense fallback={<AccountListPlaceholder />}>
             <ul class="divide-y divide-gray-200">
               <For each={accounts.data}>
                 {(account) => (
                   <li>
-                    <A href="#" class="block hover:bg-gray-50">
-                      <div class="flex items-center p-4 sm:px-6">
-                        <div class="flex-1">
-                          <p>
-                            {account.data.name}
-                          </p>
-                          <p class="text-sm">
-                            Balance:
-                            <span class="ml-1" classList={{
-                              'text-green-500': account.data.current_balance.intValue > 0,
-                              'text-red-500': account.data.current_balance.intValue < 0
-                            }}>
-                              {account.data.current_balance.format()}
-                            </span>
-                          </p>
-                        </div>
-                        <ChevronRight class="w-5 h-5 text-gray-400" />
-                      </div>
-                    </A>
+                    <AccountListItem account={account.data} />
                   </li>
                 )}
               </For>
@@ -100,7 +77,7 @@ export default function Home() {
                             </Show>
                           </p>
                         </div>
-                        <ChevronRight class="w-5 h-5 text-gray-400" />
+                        <ChevronRightOutline class="w-5 h-5 text-gray-400" />
                       </div>
                     </A>
                   </li>
