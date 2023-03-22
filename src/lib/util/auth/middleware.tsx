@@ -2,7 +2,7 @@ import { ParentProps, Show } from "solid-js";
 import { LoadingPage } from "~/components/Page";
 import { isAuthenticated } from ".";
 import { createLoadingSignal } from "..";
-import { RedirectMiddleware } from "../middleware"
+import { RedirectMiddleware } from "../Middleware"
 import { attemptLogin } from "./util";
 
 export const InitializeAuthentication = (props: ParentProps) => {
