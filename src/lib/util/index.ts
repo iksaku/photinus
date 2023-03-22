@@ -1,4 +1,4 @@
-import { Accessor, createSignal } from 'solid-js'
+import { Accessor, ComponentProps, createSignal, ValidComponent } from 'solid-js'
 
 export * from './auth'
 export * from './cache'
@@ -10,6 +10,32 @@ export function str_random(length: number): string {
         .fill('')
         .map((v) => Math.random().toString(36).charAt(2))
         .join('')
+}
+
+export function blank(val: any): boolean {
+    if (val === null || val === undefined) {
+        return true
+    }
+
+    if (typeof val === 'string') {
+        return val.trim() === ''
+    }
+
+    if (typeof val === 'number' || typeof val === 'boolean') {
+        return false
+    }
+
+    if (Array.isArray(val)) {
+        return val.length === 0
+    }
+
+    // TODO: Check object?
+
+    return !val
+}
+
+export function filled(val: any): boolean {
+    return !blank(val)
 }
 
 export function tap<T = any>(value: T, callback: (value: T) => void): T {
@@ -25,6 +51,15 @@ export function value<T = any>(val: T, ...args: any): T extends ((...args: any) 
     }
 
     return val as any
+}
+
+export function transform<T = any, R = any>(val: T, callback: (val: NonNullable<T>) => R, _default?: any): R
+{
+    if (filled(val)) {
+        return callback(val!)
+    }
+
+    return value(_default, val)
 }
 
 export function joinPath(...parts: string[]): string {

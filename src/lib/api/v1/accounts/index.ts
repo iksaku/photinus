@@ -1,6 +1,8 @@
+export * from './transactions'
+
 import currency from "currency.js"
 import { Request } from "~/lib/api/Request"
-import { FireFlyApiV1PaginatedResponse, FireFlyApiV1Response } from "."
+import { FireFlyApiV1PaginatedResponse, FireFlyApiV1Response } from ".."
 
 type AccountRead = {
     id: string
@@ -23,14 +25,14 @@ type AccountRead = {
     }
 }
 
-type AccountTransform = Omit<AccountRead['attributes'], 'current_balance' | 'virtual_balance'> & {
+export type AccountTransform = Omit<AccountRead['attributes'], 'current_balance' | 'virtual_balance'> & {
     id: number
     current_balance: currency
     virtual_balance: currency
 }
 
 function transform(data: AccountRead): AccountTransform {
-    const options: currency.Options = {
+    const currencyOptions: currency.Options = {
         symbol: data.attributes.currency_symbol,
         precision: data.attributes.currency_decimal_places,
     }
@@ -38,8 +40,8 @@ function transform(data: AccountRead): AccountTransform {
     return {
         ...data.attributes,
         id: parseInt(data.id),
-        current_balance: currency(data.attributes.current_balance, options),
-        virtual_balance: currency(data.attributes.virtual_balance, options)
+        current_balance: currency(data.attributes.current_balance, currencyOptions),
+        virtual_balance: currency(data.attributes.virtual_balance, currencyOptions)
     }
 }
 

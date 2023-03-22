@@ -1,5 +1,17 @@
 import { ComponentProps } from "solid-js";
 
+/////////////////////////////////////////
+////              Arrow              ////
+/////////////////////////////////////////
+
+export function ArrowLeftOutline(props: ComponentProps<'svg'>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" {...props}>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+        </svg>
+    )
+}
+
 export function ArrowLeftMini(props: ComponentProps<'svg'>) {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" {...props}>
@@ -7,6 +19,26 @@ export function ArrowLeftMini(props: ComponentProps<'svg'>) {
         </svg>
     )
 }
+
+export function ArrowRightOutline(props: ComponentProps<'svg'>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" {...props}>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+        </svg>
+    )
+}
+
+export function ArrowsRightLeftOutline(props: ComponentProps<'svg'>) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" {...props}>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
+        </svg>
+    )
+}
+
+/////////////////////////////////////////
+////           Arrow Small           ////
+/////////////////////////////////////////
 
 export function ArrowSmallLeftOutline(props: ComponentProps<'svg'>) {
     return (

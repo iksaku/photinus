@@ -18,3 +18,12 @@ export type FireFlyApiV1PaginatedResponse<Data = Record<string, any>> = {
 }
 
 export type ApiResponse<TRequest extends Request> = Awaited<ReturnType<TRequest['send']>>
+
+export function getNextPageParam(lastPage: FireFlyApiV1PaginatedResponse) {
+    const total = lastPage.meta.pagination.total_pages
+    const current = lastPage.meta.pagination.current_page
+
+    return current < total
+        ? current + 1
+        : undefined
+}

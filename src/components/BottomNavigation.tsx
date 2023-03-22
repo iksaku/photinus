@@ -1,4 +1,4 @@
-import { JSX, Show, splitProps } from "solid-js";
+import { JSX, mergeProps, Show, splitProps } from "solid-js";
 import { A, useMatch } from "solid-start";
 import { CogOutline, CogSolid, CreditCardOutline, CreditCardSolid, HomeOutline, HomeSolid } from "./icons";
 
@@ -28,12 +28,13 @@ export default function BottomNavigation() {
 }
 
 function NavigationIcon(_props: Parameters<typeof A>[0] & { isActive: ReturnType<typeof useMatch>, fallback: JSX.Element }) {
-    const [props, attributes] = splitProps(_props, ['isActive', 'fallback', 'children'])
+    const [props, attributes] = splitProps(_props, ['isActive', 'fallback', 'children', 'class'])
 
     return (
         <A
-            class="px-4 py-3"
             classList={{
+                'px-4 py-3': true,
+                [props.class ?? '']: true,
                 'border-t-2 border-blue-500': !!props.isActive()
             }}
             {...attributes}

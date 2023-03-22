@@ -1,21 +1,13 @@
-import { createQuery } from "@tanstack/solid-query";
+import { createInfiniteQuery } from "@tanstack/solid-query";
 import { For, Show, Suspense } from "solid-js";
 import Page from "~/components/Page";
 import Tabs from "~/components/Tabs";
-import AccountListItem, { AccountListPlaceholder } from "~/components/AccountListItem";
+import AccountListItem, { AccountListPlaceholder } from "~/components/models/Account";
 import { GetAccountList } from "~/lib/api/v1/accounts";
 import { CreditCardOutline } from "~/components/icons";
 import EmptyState from "~/components/EmptyState";
-
-function queryAccountsByType(type: string) {
-    // TODO: Paginated query
-    // TODO: Pagination scrolls to top of section
-    return createQuery(() => ['accounts.index', type], async () => {
-        return await new GetAccountList()
-            .withQueryParameters({ type })
-            .send()
-    })
-}
+import { createIntersectionObserver } from "@solid-primitives/intersection-observer";
+import { getNextPageParam } from "~/lib/api/v1";
 
 const accountTypes = {
     asset: 'Assets',
@@ -28,7 +20,8 @@ export default function Accounts() {
     return (
         <Page title="Accounts">
             <Tabs.Panel
-                id="accountType"
+                id="account-type"
+                param="type"
                 tabs={accountTypes}
                 default="asset"
             >
@@ -45,20 +38,49 @@ export default function Accounts() {
 }
 
 function AccountsByType(props: { label: string, type: string }) {
-    const accounts = queryAccountsByType(props.type)
+    const accounts = createInfiniteQuery({
+        queryKey: () => ['accounts', 'index', props.type],
+        queryFn: ({ pageParam = 1 }) => new GetAccountList()
+            .withQueryParameters({
+                page: pageParam,
+                type: props.type,
+            })
+            .send(),
+        getNextPageParam
+    })
+
+    const hasData = () => accounts.data?.pages.some((page) => page.data.length > 0) ?? false
+
+    const loadMore = (el: Element) => {
+        createIntersectionObserver(() => [el], ([entry]) => {
+            if (!entry.isIntersecting) return
+            
+            if (accounts.isLoading || accounts.isFetchingNextPage) return
+
+            if (!accounts.hasNextPage) return
+
+            accounts.fetchNextPage()
+        })
+    }
 
     return (
         <Suspense fallback={<AccountListPlaceholder />}>
-            <Show when={(accounts.data?.data.length ?? 0) > 0} fallback={<EmptyAccountList />}>
+            <Show when={hasData()} fallback={<EmptyAccountList />}>
                 <ul class="divide-y divide-gray-200">
-                    <For each={accounts.data?.data}>
-                        {(account) => (
-                            <li>
-                                <AccountListItem account={account} />
-                            </li>
+                    <For each={accounts.data?.pages}>
+                        {(page) => (
+                            <For each={page.data}>
+                                {(account) => <AccountListItem account={account} />}
+                            </For>
                         )}
                     </For>
+
+                    <Show when={accounts.isFetchingNextPage}>
+                        <AccountListPlaceholder />
+                    </Show>
                 </ul>
+
+                <div ref={loadMore}></div>
             </Show>
         </Suspense>
     )

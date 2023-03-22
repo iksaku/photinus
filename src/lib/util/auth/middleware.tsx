@@ -10,7 +10,7 @@ export const InitializeAuthentication = (props: ParentProps) => {
 
     return (
         <Show when={initializing()} fallback={props.children}>
-            <LoadingPage />
+            <LoadingPage fullPage={true} />
         </Show>
     )
 }

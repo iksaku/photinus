@@ -1,5 +1,6 @@
 import { Accessor, createContext, For, ParentProps, Show, useContext } from "solid-js"
-import { useLocation, useNavigate } from "solid-start"
+import { useSearchParams } from "solid-start"
+import { filled } from "~/lib/util"
 import BasePanel from "./Panel"
 
 const TabsContext = createContext<Accessor<string>>()
@@ -7,20 +8,20 @@ function useTabsContext() {
     return useContext(TabsContext)
 }
 
-function Panel(props: ParentProps<{ id: string, tabs: Record<string, string>, default: string }>) {
-    const navigate = useNavigate()
-    const navigateToTab = (tab: string) => navigate(`#${tab}`, {
-        scroll: true
-    })
+function Panel(props: ParentProps<{ id: string, param: string, tabs: Record<string, string>, default: string }>) {
+    const [params, setParams] = useSearchParams()
+    const switchTab = (to: string) => {
+        setParams({
+            [props.param]: to
+        })
+    }    
 
     const activeTab = () => {
-        let currentTab = useLocation().hash.replace(/^#/, '')
+        const currentTab = params[props.param]
 
-        if (currentTab.length < 1) {
-            currentTab = props.default
-        }
-
-        return currentTab
+        return filled(currentTab)
+            ? currentTab
+            : props.default
     }
 
     return (
@@ -38,7 +39,7 @@ function Panel(props: ParentProps<{ id: string, tabs: Record<string, string>, de
                             id={`tabs.${props.id}.mobile`}
                             class="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                             value={activeTab()}
-                            onChange={(e) => navigateToTab(e.currentTarget.value)}
+                            onChange={(e) => switchTab(e.currentTarget.value)}
                         >
                             <For each={Object.entries(props.tabs)}>
                                 {([value, name]) => (
@@ -55,12 +56,12 @@ function Panel(props: ParentProps<{ id: string, tabs: Record<string, string>, de
                                 <For each={Object.entries(props.tabs)}>
                                     {([value, name]) => (
                                         <button
-                                            class="whitespace-nowrap pb-2 border-b-2 text-sm font-medium"
                                             classList={{
+                                                'whitespace-nowrap pb-2 border-b-2 text-sm font-medium': true,
                                                 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700': activeTab() !== value,
                                                 'border-indigo-500 text-indigo-600': activeTab() === value,
                                             }}
-                                            onClick={() => navigateToTab(value)}
+                                            onClick={() => switchTab(value)}
                                             aria-selected={activeTab() === value}
                                         >
                                             {name}

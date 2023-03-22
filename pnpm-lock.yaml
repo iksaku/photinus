@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@solid-primitives/intersection-observer': ^2.0.8
   '@solidjs/meta': ^0.28.2
   '@solidjs/router': ^0.7.0
   '@tailwindcss/forms': ^0.5.3
@@ -29,6 +30,7 @@ dependencies:
   undici: 5.19.1
 
 devDependencies:
+  '@solid-primitives/intersection-observer': 2.0.8_solid-js@1.6.11
   '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.7
   '@tanstack/solid-query': 4.24.10_solid-js@1.6.11
   '@types/node': 18.13.0
@@ -1392,6 +1394,23 @@ packages:
 
   /@sideway/pinpoint/2.0.0:
     resolution: {integrity: sha512-RNiOoTPkptFtSVzQevY/yWtZwf/RxyVnPy/OcA9HBM3MlGDnBEYL5B41H0MTn0Uec8Hi+2qUtTfG2WWZBmMejQ==}
+
+  /@solid-primitives/intersection-observer/2.0.8_solid-js@1.6.11:
+    resolution: {integrity: sha512-CPa8hjVK7Zw4mT43ExAVRpg0fMd3gX8OCn17s5t3o2nE4KKklkuLdLPC+Gx2TSNvTJqJFzdgfTVP71gpMoZoVg==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      '@solid-primitives/utils': 5.5.0_solid-js@1.6.11
+      solid-js: 1.6.11
+    dev: true
+
+  /@solid-primitives/utils/5.5.0_solid-js@1.6.11:
+    resolution: {integrity: sha512-+0VGdqRA4g/u6PACJKER7E9v7njd3c+JA4RuXGvvZO/v8wPegOLHkxpohOQHRBSWY+Q+dmyVfXn0mks2m6gfJg==}
+    peerDependencies:
+      solid-js: ^1.6.0
+    dependencies:
+      solid-js: 1.6.11
+    dev: true
 
   /@solidjs/meta/0.28.2_solid-js@1.6.11:
     resolution: {integrity: sha512-avlLgBPdk4KVxzRGFlYp/MIJo8B5jVgXPgk6OUnUP8km21Z+ovO+DUd7ZPA7ejv8PBdWi9GE3zCzw8RU2YuV2Q==}
