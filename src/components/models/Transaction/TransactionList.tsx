@@ -1,10 +1,10 @@
 import { ComponentProps, For, Match, Show, splitProps, Switch } from "solid-js";
 import { TransactionSplitTransform, TransactionTransform } from "~/lib/api/v1/accounts";
-import { ArrowLeftOutline, ArrowRightOutline, ArrowsRightLeftOutline } from "../icons";
+import { ArrowLeftOutline, ArrowRightOutline, ArrowsRightLeftOutline } from "../../icons";
 
-export default function TransactionListItem(_props: ComponentProps<'li'> & { transaction: TransactionTransform }) {
+export function TransactionListItem(_props: ComponentProps<'li'> & { transaction: TransactionTransform }) {
     const [props, attributes] = splitProps(_props, ['transaction', 'class'])
-    
+
     const isSplit = () => props.transaction.transactions.length > 1
     const type = () => props.transaction.transactions[0].type
 
@@ -13,9 +13,9 @@ export default function TransactionListItem(_props: ComponentProps<'li'> & { tra
             classList={{
                 [props.class ?? '']: true,
                 'contain-paint': true,
-                'border-x-2 !border-x-red-200': isSplit() && type() === 'withdrawal',
-                'border-x-2 !border-x-green-200': isSplit() && type() === 'deposit',
-                'border-x-2 !border-x-blue-200': isSplit() && type() === 'transfer',
+                '!border !border-red-200': isSplit() && type() === 'withdrawal',
+                '!border !border-green-200': isSplit() && type() === 'deposit',
+                '!border !border-blue-200': isSplit() && type() === 'transfer',
             }}
             {...attributes}
         >

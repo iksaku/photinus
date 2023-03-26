@@ -5,7 +5,7 @@ import { Title, useParams } from "solid-start";
 import { HttpStatusCode } from "solid-start/server";
 import EmptyState from "~/components/EmptyState";
 import { CreditCardOutline } from "~/components/icons";
-import TransactionListItem, { TransactionListPlaceholder } from "~/components/models/Transaction";
+import { TransactionListItem, TransactionListPlaceholder } from "~/components/models/Transaction";
 import Page, { LoadingPage } from "~/components/Page";
 import Panel from "~/components/Panel";
 import { getNextPageParam } from "~/lib/api/v1";

@@ -37,8 +37,8 @@ export default function Page(_props: ParentProps<ComponentProps<'div'> & { title
 export function LoadingPage(props: { fullPage?: boolean }) {
     return (
         <main
-            class="flex flex-col items-center justify-center space-y-6"
             classList={{
+                'flex flex-col items-center justify-center space-y-6': true,
                 'grow': !props.fullPage,
                 'min-h-screen': !!props.fullPage
             }}
